@@ -18,17 +18,17 @@ app.get("/", (req, res) => {
 });
 
 // await initializeQdrant();
-// await seedQdrant();
-// await searchQdrant();
+await seedQdrant();
+// const results = await searchQdrant("What is Docker?");
+// console.log(results);
 
 // Generating an embedding using gemini-embedding-001 for now, will move to gemini-embedding-2 real soon
+// const embedding = await generateEmbedding(
+//   "Docker is a platform for developing and running containers."
+// );
 
-const embedding = await generateEmbedding(
-  "Docker is a platform for developing and running containers."
-);
-
-console.log("Embedding length:", embedding.length);
-console.log("First 10 values:", embedding.slice(0, 10));
+// console.log("Embedding length:", embedding.length);
+// console.log("First 10 values:", embedding.slice(0, 10));
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
