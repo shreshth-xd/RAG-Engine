@@ -1,7 +1,11 @@
 import fs from "fs/promises";
 import path from "path";
+import { fileURLToPath } from "url";
 
-const DATA_DIRECTORY = "../data";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const DATA_DIRECTORY = path.join(__dirname, "../data");
 
 export async function loadDocuments() {
   const files = await fs.readdir(DATA_DIRECTORY);
