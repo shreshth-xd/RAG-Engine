@@ -1,0 +1,1 @@
+Docker is a platform for developing and running containers.
