@@ -4,18 +4,21 @@ configDotenv();
 import express from "express";
 import qdrant from "./config/qdrant.js";
 import { testQdrantConnection, initializeQdrant } from "./db/initQdrant.js";
+import { seedQdrant } from "./db/seedQdrant.js";
+import { searchQdrant } from "./db/searchQdrant.js";
 
 
 const app = express();
 const PORT = process.env.PORT;
 
-await initializeQdrant();
 
 app.get("/", (req, res) => {
   res.send("RAG Engine is running 🚀");
 });
 
-testQdrantConnection();
+await initializeQdrant();
+await seedQdrant();
+await searchQdrant();
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
