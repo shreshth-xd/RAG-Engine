@@ -1,19 +1,9 @@
 import qdrant from "../config/qdrant.js";
 import { generateEmbedding } from "../services/embeddingService.js";
+import { loadDocuments } from "../services/documentLoader.js";
 
 export async function seedQdrant() {
-  const documents = [
-    {
-      id: 1,
-      text: "Docker is a platform for developing and running containers.",
-      source: "docker.md",
-    },
-    {
-      id: 2,
-      text: "Express is a minimalist web framework for Node.js.",
-      source: "express.md",
-    },
-  ];
+  const documents = await loadDocuments();;
 
   const points = [];
 
