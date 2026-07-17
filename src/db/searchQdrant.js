@@ -1,13 +1,14 @@
 import qdrant from "../config/qdrant.js";
+import { generateEmbedding } from "../services/embeddingService.js";
 
-export async function searchQdrant() {
-  const queryVector = Array.from({ length: 3072 }, () => Math.random());
+export async function searchQdrant(query) {
+  const queryEmbedding = await generateEmbedding(query);
 
   const results = await qdrant.query("documents", {
-    query: queryVector,
+    query: queryEmbedding,
     limit: 2,
     with_payload: true,
   });
 
-  console.log(results.points);
+  return results.points;
 }
