@@ -1,0 +1,33 @@
+{
+  "name": "rag-engine",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shreshth-xd/RAG-Engine.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/shreshth-xd/RAG-Engine/issues"
+  },
+  "homepage": "https://github.com/shreshth-xd/RAG-Engine#readme",
+  "dependencies": {
+    "@qdrant/js-client-rest": "^1.18.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
