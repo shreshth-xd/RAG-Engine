@@ -4,7 +4,7 @@ configDotenv();
 import path from "path";
 import { fileURLToPath } from "url";
 import crypto from "crypto";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import express from "express";
 import { seedQdrant } from "./db/seedQdrant.js";
 import { searchQdrant } from "./db/searchQdrant.js";
