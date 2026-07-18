@@ -1,9 +1,9 @@
 export function buildPrompt(question, chunks) {
   const context = chunks
     .map((chunk, index) => {
-      return `[Source ${index + 1}: ${chunk.source}]
+      return `[Source ${index + 1}: ${chunk.payload.source}]
 
-${chunk.text}`;
+${chunk.payload.text}`;
     })
     .join("\n\n");
 
