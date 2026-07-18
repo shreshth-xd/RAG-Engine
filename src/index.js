@@ -1,6 +1,8 @@
 import { configDotenv } from "dotenv";
 configDotenv();
 
+import path from "path";
+import { fileURLToPath } from "url";
 import express from "express";
 import qdrant from "./config/qdrant.js";
 import { testQdrantConnection, initializeQdrant } from "./db/initQdrant.js";
@@ -11,39 +13,45 @@ import { buildPrompt } from "./services/promptBuilder.js";
 import { generateAnswer } from "./services/llmService.js";
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "..", "public")));
 
 app.get("/", (req, res) => {
-  res.send("RAG Engine is running 🚀");
+  res.sendFile(path.join(__dirname, "..", "public", "index.html"));
 });
 
-// await initializeQdrant();
-// await seedQdrant();
-const chunks = await searchQdrant("What is Docker?");
-const prompt = buildPrompt(
-  "What is Docker?",
-  chunks
-);
-const finalResponse = await generateAnswer(prompt);
-console.log(finalResponse)
+app.post("/api/chat", async (req, res) => {
+  try {
+    const { question } = req.body;
 
+    if (typeof question !== "string" || !question.trim()) {
+      return res.status(400).json({ error: "Question is required." });
+    }
 
-// Generating an embedding using gemini-embedding-001 for now, will move to gemini-embedding-2 real soon
-// const embedding = await generateEmbedding(
-//   "Docker is a platform for developing and running containers."
-// );
+    const chunks = await searchQdrant(question);
+    const prompt = buildPrompt(question, chunks);
+    const answer = await generateAnswer(prompt);
 
-// console.log("Embedding length:", embedding.length);
-// console.log("First 10 values:", embedding.slice(0, 10));
+    res.json({ answer });
+  } catch (error) {
+    console.error("Chat request failed:", error);
+    res.status(500).json({ error: "Something went wrong." });
+  }
+});
 
-// To test the availability of a model
-// const response = await ai.models.generateContent({
-//   model: "gemini-3.1-flash-lite",
-//   contents: "Say hello",
-// });
-
-// console.log(response.text);
+// Preserve the existing terminal-style RAG test flow.
+try {
+  const chunks = await searchQdrant("What is Docker?");
+  const prompt = buildPrompt("What is Docker?", chunks);
+  const finalResponse = await generateAnswer(prompt);
+  console.log(finalResponse);
+} catch (error) {
+  console.error("Initial RAG check failed:", error);
+}
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
