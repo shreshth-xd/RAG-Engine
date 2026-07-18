@@ -1,23 +1,36 @@
 import qdrant from "../config/qdrant.js";
 import { generateEmbedding } from "../services/embeddingService.js";
 import { loadDocuments } from "../services/documentLoader.js";
+import { splitText } from "../services/chunker.js";
 
 export async function seedQdrant() {
-  const documents = await loadDocuments();;
+  await qdrant.delete("documents", {
+    filter: {},
+    wait: true,
+  });
+
+  console.log("🗑️ Cleared previous index.");
+
+  const documents = await loadDocuments();
 
   const points = [];
+  let pointId = 1;
 
   for (const document of documents) {
-    const embedding = await generateEmbedding(document.text);
+    const chunks = splitText(document.text);
 
-    points.push({
-      id: document.id,
-      vector: embedding,
-      payload: {
-        text: document.text,
-        source: document.source,
-      },
-    });
+    for (const chunk of chunks) {
+      const embedding = await generateEmbedding(chunk);
+
+      points.push({
+        id: pointId++,
+        vector: embedding,
+        payload: {
+          text: chunk,
+          source: document.source,
+        },
+      });
+    }
   }
 
   await qdrant.upsert("documents", {
@@ -25,5 +38,7 @@ export async function seedQdrant() {
     points,
   });
 
-  console.log("✅ Seeded Qdrant with real embeddings.");
+  console.log(`✅ Indexed ${points.length} chunks.`);
+
+
 }
