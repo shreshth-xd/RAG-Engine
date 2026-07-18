@@ -7,7 +7,8 @@ import { testQdrantConnection, initializeQdrant } from "./db/initQdrant.js";
 import { seedQdrant } from "./db/seedQdrant.js";
 import { searchQdrant } from "./db/searchQdrant.js";
 import { generateEmbedding } from "./services/embeddingService.js";
-import ai from "./config/gemini.js";
+import { buildPrompt } from "./services/promptBuilder.js";
+import { generateAnswer } from "./services/llmService.js";
 
 const app = express();
 const PORT = process.env.PORT;
@@ -19,8 +20,14 @@ app.get("/", (req, res) => {
 
 // await initializeQdrant();
 // await seedQdrant();
-const results = await searchQdrant("What is Docker?");
-console.log(results);
+const chunks = await searchQdrant("What is Docker?");
+const prompt = buildPrompt(
+  "What is Docker?",
+  chunks
+);
+const finalResponse = await generateAnswer(prompt);
+console.log(finalResponse)
+
 
 // Generating an embedding using gemini-embedding-001 for now, will move to gemini-embedding-2 real soon
 // const embedding = await generateEmbedding(
